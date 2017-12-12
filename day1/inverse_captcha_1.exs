@@ -1,13 +1,30 @@
 defmodule InverseCaptcha do
   
-  def sum(str) when is_binary(str) do
-    [h|tail] = String.graphemes(str)
-    sum([h|tail], h)
+  def sum1(str), do: calculate(str, 1)
+  def sum2(str), do: calculate(str, div(String.length(str), 2))
+  
+  def calculate(str, offset) do
+    map = 0..(String.length(str) - 1)
+    |> Enum.zip(String.graphemes(str)) 
+    |> Enum.into(%{})
+
+    map
+    |> Enum.filter(fn {k,_v} ->
+      is_match?(map, k, offset)
+    end)
+    |> Enum.into(%{})
+    |> Map.values
+    |> Enum.map(&String.to_integer/1)
+    |> Enum.sum
   end
 
-  def sum([], _), do: 0
-  def sum([a], a), do: String.to_integer(a)
-  def sum([_a], _), do: 0
-  def sum([a|[a|tail]], first), do: String.to_integer(a) + sum([a|tail], first)
-  def sum([_a|[b|tail]], first), do: sum([b|tail], first)
+  def is_match?(map, idx, offset) do
+    ref_idx = cond do
+      idx + offset >= Enum.count(map) ->
+        idx + offset - Enum.count(map)
+      true ->
+        idx + offset
+    end
+    map[idx] == map[ref_idx]
+  end
 end
