@@ -36,7 +36,6 @@ class SpiralMemory
       corner = nearest_corner(pos)
       ofc = offset_from_corner(pos)
       side = Math.sqrt(nearest_square(pos)).to_i
-      # side = side + 1 unless is_squared_corner?(corner)
       unless is_squared_corner?(corner)
         side = side - 1 if corner < pos
         side = side + 1 if corner > pos
