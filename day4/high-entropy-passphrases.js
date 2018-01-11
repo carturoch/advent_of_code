@@ -1,6 +1,8 @@
 function uniqueWords(sen) {
   return sen.split(" ").reduce((acc, w) => {
-    if (acc.indexOf(w) == -1 && w != "") {
+    // const fn = (uw) => uw == w; // Step 1
+    const fn = (uw) => areAnagrams(uw, w);
+    if (acc.findIndex(fn) == -1 && w != "") {
       acc.push(w);
     }
     return acc;
