@@ -7,6 +7,10 @@ function uniqueWords(sen) {
   }, []);
 }
 
+function areAnagrams(a, b) {
+  return a.split("").sort().join("") == b.split("").sort().join("");
+}
+
 function isValidPassphrase(sen) {
   if (sen == "") {
     return false;
@@ -18,6 +22,7 @@ function isValidPassphrase(sen) {
 
 module.exports = {
   isValidPassphrase: isValidPassphrase,
+  areAnagrams: areAnagrams,
   uniqueWords: uniqueWords
 };
 

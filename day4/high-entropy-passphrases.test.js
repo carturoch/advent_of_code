@@ -1,6 +1,7 @@
 const app = require("./high-entropy-passphrases");
-const uniqueWords = app.uniqueWords
+const uniqueWords = app.uniqueWords;
 const isValidPassphrase = app.isValidPassphrase;
+const areAnagrams = app.areAnagrams;
 
 describe("high-entropy-passphrase", () => {
   describe("uniqueWords", () => {
@@ -29,10 +30,30 @@ describe("high-entropy-passphrase", () => {
       expect(isValidPassphrase("")).toBe(false);
     });
     test("is true when sentence has no duplicated words", () => {
-      expect(isValidPassphrase("abc xkd lmp")).toBe(true)
+      expect(isValidPassphrase("abc xkd lmp")).toBe(true);
     });
     test("is true when sentence has no duplicated words with irregular spacing", () => {
-      expect(isValidPassphrase("abc    xkd lmp  ")).toBe(true)
+      expect(isValidPassphrase("abc    xkd lmp  ")).toBe(true);
+    });
+  });
+  describe("areAnagrams", () => {
+    test("same words are anagrams", () => {
+      expect(areAnagrams("aaa", "aaa")).toBe(true);
+    });
+    test("empty strings are anagrams", () => {
+      expect(areAnagrams("", "")).toBe(true);
+    });
+    test("different lettered words are not anagrams", () => {
+      expect(areAnagrams("abc", "cbd")).toBe(false);
+      expect(areAnagrams("abc", "xyz")).toBe(false);
+      expect(areAnagrams("abc", "abx")).toBe(false);
+    });
+    test("anagrams have equal length", () => {
+      expect(areAnagrams("aaa", "aaaa")).toBe(false);
+    });
+    test("anagrams have same letters in any order", () => {
+      expect(areAnagrams("abc", "cab")).toBe(true);
+      expect(areAnagrams("aabb", "baba")).toBe(true);
     });
   });
 });
