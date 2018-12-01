@@ -43,6 +43,7 @@ describe ChronalCalibration do
         subject.apply('-1', stop_on_repeated: true)
 
         expect(subject).to be_duplicated
+        expect(subject.detected_frequencies).to eq [0, 1]
         expect(subject.result).to eq 0
       end
     end

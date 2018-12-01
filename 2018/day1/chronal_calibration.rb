@@ -9,7 +9,7 @@ class ChronalCalibration
   end
 
   def apply(str, stop_on_repeated: false)
-    return self.duplicated if duplicated?
+    return self.duplicated if duplicated? && stop_on_repeated
     
     self.result += str.to_i
     check_duplication
@@ -47,3 +47,12 @@ end
 # device = ChronalCalibration.new
 # IO.foreach('input.txt') { |v| device.apply(v) }
 # p device.result 
+
+# ## STEP 2
+# device = ChronalCalibration.new
+# until device.duplicated? || n == MAX
+#   IO.foreach('input.txt') do |v| 
+#     device.apply(v, stop_on_repeated: true)
+#     break if device.duplicated?
+#   end
+# end
