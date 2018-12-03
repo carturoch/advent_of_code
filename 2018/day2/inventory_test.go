@@ -45,3 +45,33 @@ func TestCountChars(t *testing.T) {
 		})
 	}
 }
+
+func TestFreqTable_GetCharsMoreFreqThan(t *testing.T) {
+	type args struct {
+		val int
+	}
+	tests := []struct {
+		name      string
+		table     FreqTable
+		args      args
+		wantTrios []string
+	}{
+		{
+			"Detects equal and greater values",
+			FreqTable{
+				"a": 2,
+				"b": 1,
+				"c": 3,
+			},
+			args{2},
+			[]string{"a", "c"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotTrios := tt.table.GetCharsMoreFreqThan(tt.args.val); !reflect.DeepEqual(gotTrios, tt.wantTrios) {
+				t.Errorf("FreqTable.GetCharsMoreFreqThan() = %v, want %v", gotTrios, tt.wantTrios)
+			}
+		})
+	}
+}
