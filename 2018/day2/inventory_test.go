@@ -46,7 +46,7 @@ func TestCountChars(t *testing.T) {
 	}
 }
 
-func TestFreqTable_GetCharsMoreFreqThan(t *testing.T) {
+func TestFreqTable_GetCharsEqFreq(t *testing.T) {
 	type args struct {
 		val int
 	}
@@ -64,13 +64,13 @@ func TestFreqTable_GetCharsMoreFreqThan(t *testing.T) {
 				"c": 3,
 			},
 			args{2},
-			[]string{"a", "c"},
+			[]string{"a"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotTrios := tt.table.GetCharsMoreFreqThan(tt.args.val); !reflect.DeepEqual(gotTrios, tt.wantTrios) {
-				t.Errorf("FreqTable.GetCharsMoreFreqThan() = %v, want %v", gotTrios, tt.wantTrios)
+			if gotTrios := tt.table.GetCharsEqFreq(tt.args.val); !reflect.DeepEqual(gotTrios, tt.wantTrios) {
+				t.Errorf("FreqTable.GetCharsEqFreq() = %v, want %v", gotTrios, tt.wantTrios)
 			}
 		})
 	}

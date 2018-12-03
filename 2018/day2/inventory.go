@@ -20,18 +20,31 @@ func CountChars(line string) FreqTable {
 	return res
 }
 
-// GetCharsMoreFreqThan returns terms with frequency higher than val
-func (table FreqTable) GetCharsMoreFreqThan(val int) (res []string) {
+// GetCharsEqFreq returns terms with frequency equal to val
+func (table FreqTable) GetCharsEqFreq(val int) (res []string) {
 	for char, freq := range table {
-		if freq >= val {
+		if freq == val {
 			res = append(res, char)
 		}
 	}
 	return res
 }
 
+func sliceDiff(a, b []string) (diff []string) {
+	ref := make(map[string]bool)
+	for _, char := range a {
+		ref[char] = true
+	}
+	for _, char := range b {
+		if !ref[char] {
+			diff = append(diff, char)
+		}
+	}
+	return diff
+}
+
 func main() {
-	filename := "./sample.in"
+	filename := "./input.in"
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -42,15 +55,16 @@ func main() {
 	duosCount := 0
 	triosCount := 0
 	for scanner.Scan() {
-		ft := CountChars(scanner.Text())
-		trios := ft.GetCharsMoreFreqThan(3)
-		duos := ft.GetCharsMoreFreqThan(2)
+		line := scanner.Text()
+		ft := CountChars(line)
+		trios := ft.GetCharsEqFreq(3)
+		duos := ft.GetCharsEqFreq(2)
 		if len(trios) > 0 {
 			triosCount++
 		}
-		if len(duos) > 0 {
+		if len(duos) > 0 && len(sliceDiff(trios, duos)) > 0 {
 			duosCount++
 		}
 	}
-	fmt.Println("Trios:", triosCount, "Duos:", duosCount)
+	fmt.Println("Trios:", triosCount, "Duos:", duosCount, "Result:", triosCount*duosCount)
 }
