@@ -75,3 +75,55 @@ func TestFreqTable_GetCharsEqFreq(t *testing.T) {
 		})
 	}
 }
+
+func TestCommon(t *testing.T) {
+	type args struct {
+		a string
+		b string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantRes string
+	}{
+		{
+			"Returns empty when there are no matches",
+			args{
+				"abc",
+				"zyx",
+			},
+			"",
+		},
+		{
+			"Matches chars in same position",
+			args{
+				"abcpq",
+				"zbcxr",
+			},
+			"bc",
+		},
+		{
+			"Support different size strings",
+			args{
+				"abcde",
+				"ab",
+			},
+			"ab",
+		},
+		{
+			"Returns empty when one string is empty",
+			args{
+				"0",
+				"ab",
+			},
+			"",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotRes := Common(tt.args.a, tt.args.b); gotRes != tt.wantRes {
+				t.Errorf("Common() = %v, want %v", gotRes, tt.wantRes)
+			}
+		})
+	}
+}

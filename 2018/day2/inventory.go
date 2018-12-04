@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 )
 
@@ -43,15 +44,19 @@ func sliceDiff(a, b []string) (diff []string) {
 	return diff
 }
 
-func main() {
-	filename := "./input.in"
-	file, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
+// Common returns the chars that match
+// in value and position from the given strings
+func Common(a, b string) (res string) {
+	max := int(math.Min(float64(len(a)), float64(len(b))))
+	for index := 0; index < max; index++ {
+		if a[index] == b[index] {
+			res += string(a[index])
+		}
 	}
-	defer file.Close()
+	return res
+}
 
-	scanner := bufio.NewScanner(file)
+func step1(scanner *bufio.Scanner) {
 	duosCount := 0
 	triosCount := 0
 	for scanner.Scan() {
@@ -67,4 +72,31 @@ func main() {
 		}
 	}
 	fmt.Println("Trios:", triosCount, "Duos:", duosCount, "Result:", triosCount*duosCount)
+}
+
+func step2(scanner *bufio.Scanner) string {
+	readLines := []string{}
+	for scanner.Scan() {
+		newLine := scanner.Text()
+		for _, readLine := range readLines {
+			if common := Common(newLine, readLine); len(common) == len(newLine)-1 {
+				return common
+			}
+		}
+		readLines = append(readLines, newLine)
+	}
+	return ""
+}
+
+func main() {
+	filename := "./input.in"
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	res := step2(scanner)
+	fmt.Println(res)
 }
