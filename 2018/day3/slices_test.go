@@ -189,3 +189,61 @@ func TestApplyClaim(t *testing.T) {
 		})
 	}
 }
+
+func TestHasConflicts(t *testing.T) {
+	type args struct {
+		c Claim
+		l *Layout
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			"Detects conflicts in the claim area",
+			args{
+				Claim{
+					ID:     "123",
+					Left:   1,
+					Top:    1,
+					Width:  2,
+					Height: 2,
+				},
+				&Layout{
+					{Empty, Empty, Empty, Empty},
+					{Empty, Marked, Marked, Empty},
+					{Empty, Conflicted, Conflicted, Empty},
+					{Empty, Empty, Empty, Empty},
+				},
+			},
+			true,
+		},
+		{
+			"False when no conflicts are in the claim area",
+			args{
+				Claim{
+					ID:     "123",
+					Left:   1,
+					Top:    1,
+					Width:  2,
+					Height: 2,
+				},
+				&Layout{
+					{Conflicted, Conflicted, Conflicted, Conflicted},
+					{Conflicted, Marked, Marked, Conflicted},
+					{Conflicted, Marked, Marked, Conflicted},
+					{Conflicted, Conflicted, Conflicted, Conflicted},
+				},
+			},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := HasConflicts(tt.args.c, tt.args.l); got != tt.want {
+				t.Errorf("HasConflicts() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -44,8 +44,7 @@ func InitLayout(size int) Layout {
 
 // ApplyClaim applies a given claim to a layout
 func ApplyClaim(c Claim, l *Layout) *Layout {
-	minTop := int(math.Min(float64(len(*l)), float64(c.Top+c.Height)))
-	minLeft := int(math.Min(float64(len(*l)), float64(c.Left+c.Width)))
+	minTop, minLeft := boundaries(c, l)
 	for i := c.Top; i < minTop; i++ {
 		for j := c.Left; j < minLeft; j++ {
 			state := Marked
@@ -56,6 +55,19 @@ func ApplyClaim(c Claim, l *Layout) *Layout {
 		}
 	}
 	return l
+}
+
+// HasConflicts determines whether a claim has conflicts
+func HasConflicts(c Claim, l *Layout) bool {
+	minTop, minLeft := boundaries(c, l)
+	for i := c.Top; i < minTop; i++ {
+		for j := c.Left; j < minLeft; j++ {
+			if (*l)[i][j] == Conflicted {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // ParseClaim parses a file line into a claim
@@ -78,6 +90,12 @@ func ParseClaim(line string) (Claim, error) {
 	return claim, err
 }
 
+func boundaries(c Claim, l *Layout) (int, int) {
+	minTop := int(math.Min(float64(len(*l)), float64(c.Top+c.Height)))
+	minLeft := int(math.Min(float64(len(*l)), float64(c.Left+c.Width)))
+	return minTop, minLeft
+}
+
 func scanFile(filename string) *bufio.Scanner {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -94,23 +112,36 @@ func eachLine(filename string, f func(string)) {
 	}
 }
 
-func main() {
-	filename := "./input.in"
-	size := 1100
-	layout := InitLayout(size)
-	eachLine(filename, func(line string) {
-		claim, _ := ParseClaim(line)
-		ApplyClaim(claim, &layout)
-	})
-
+func step1(l Layout) int {
 	count := 0
+	size := len(l)
 	for i := 0; i < size; i++ {
 		for j := 0; j < size; j++ {
-			if layout[i][j] == Conflicted {
+			if l[i][j] == Conflicted {
 				count++
 			}
 		}
 	}
+	return count
+}
 
-	fmt.Println(count)
+func main() {
+	filename := "./input.in"
+	size := 1000
+	layout := InitLayout(size)
+	var claims []Claim
+	eachLine(filename, func(line string) {
+		claim, _ := ParseClaim(line)
+		claims = append(claims, claim)
+		ApplyClaim(claim, &layout)
+	})
+
+	// fmt.Println(step1(layout))
+
+	for _, c := range claims {
+		if !HasConflicts(c, &layout) {
+			fmt.Println("Found:", c.ID)
+		}
+	}
+	fmt.Println("Done")
 }
